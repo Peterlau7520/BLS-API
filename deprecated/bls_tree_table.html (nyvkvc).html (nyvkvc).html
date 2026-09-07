@@ -1,0 +1,428 @@
+<title>BLS Nonfarm Payrolls — Interactive Table</title>
+<style>
+  :root {
+    --bg: #F0F4FA;
+    --surface: #FFFFFF;
+    --surface-alt: #F7F9FC;
+    --header-bg: #1A2B52;
+    --header-text: #E8EEF8;
+    --header-sub: #9AADD4;
+    --text: #1C2A45;
+    --text-muted: #5A6A85;
+    --border: #D4DCE8;
+    --accent: #2B5BA8;
+    --accent-hover: #1A3D7A;
+    --positive: #1A7A45;
+    --negative: #C0392B;
+    --neutral: #4A5568;
+    --toggle-bg: #E4EAF5;
+    --toggle-hover: #C8D4EC;
+    --shadow: 0 2px 8px rgba(27,43,82,0.10);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0D1B2E;
+      --surface: #132038;
+      --surface-alt: #162540;
+      --header-bg: #0A1528;
+      --header-text: #C8D8F0;
+      --header-sub: #6B88B8;
+      --text: #D8E4F4;
+      --text-muted: #7A90B0;
+      --border: #1E3258;
+      --accent: #5B8ED4;
+      --accent-hover: #7AAEE8;
+      --positive: #2ECC71;
+      --negative: #E74C3C;
+      --neutral: #8A9AB8;
+      --toggle-bg: #1A2E50;
+      --toggle-hover: #223860;
+      --shadow: 0 2px 8px rgba(0,0,0,0.35);
+    }
+  }
+
+  :root[data-theme="light"] {
+    --bg: #F0F4FA;
+    --surface: #FFFFFF;
+    --surface-alt: #F7F9FC;
+    --header-bg: #1A2B52;
+    --header-text: #E8EEF8;
+    --header-sub: #9AADD4;
+    --text: #1C2A45;
+    --text-muted: #5A6A85;
+    --border: #D4DCE8;
+    --accent: #2B5BA8;
+    --accent-hover: #1A3D7A;
+    --positive: #1A7A45;
+    --negative: #C0392B;
+    --neutral: #4A5568;
+    --toggle-bg: #E4EAF5;
+    --toggle-hover: #C8D4EC;
+    --shadow: 0 2px 8px rgba(27,43,82,0.10);
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0D1B2E;
+    --surface: #132038;
+    --surface-alt: #162540;
+    --header-bg: #0A1528;
+    --header-text: #C8D8F0;
+    --header-sub: #6B88B8;
+    --text: #D8E4F4;
+    --text-muted: #7A90B0;
+    --border: #1E3258;
+    --accent: #5B8ED4;
+    --accent-hover: #7AAEE8;
+    --positive: #2ECC71;
+    --negative: #E74C3C;
+    --neutral: #8A9AB8;
+    --toggle-bg: #1A2E50;
+    --toggle-hover: #223860;
+    --shadow: 0 2px 8px rgba(0,0,0,0.35);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+    padding: 24px 20px;
+  }
+
+  header {
+    max-width: 1000px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .header-left h1 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+
+  .header-left p {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    letter-spacing: 0.01em;
+  }
+
+  .theme-toggle {
+    background: var(--toggle-bg);
+    border: none;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 11px;
+    color: var(--text-muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .theme-toggle:hover { background: var(--toggle-hover); }
+
+  .table-wrap {
+    max-width: 1000px;
+    margin: 0 auto;
+    overflow-x: auto;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    font-variant-numeric: tabular-nums;
+  }
+
+  thead tr {
+    background: var(--header-bg);
+  }
+
+  th {
+    padding: 0;
+    font-weight: 600;
+    text-align: right;
+    white-space: nowrap;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .th-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 10px 12px;
+    color: var(--header-text);
+    font-size: 11px;
+    letter-spacing: 0.03em;
+  }
+
+  th.col-industry .th-inner {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .th-group {
+    font-size: 10px;
+    color: var(--header-sub);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  th.col-naics .th-inner,
+  th.col-change .th-inner {
+    min-width: 60px;
+  }
+
+  th.col-change {
+    background: rgba(255,255,255,0.04);
+  }
+
+  td {
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+    color: var(--text);
+    font-size: 12.5px;
+  }
+
+  td.col-industry {
+    text-align: left;
+    max-width: 300px;
+  }
+
+  td.col-naics {
+    color: var(--text-muted);
+    font-size: 11px;
+    font-family: "SF Mono", "Consolas", monospace;
+  }
+
+  td.col-change {
+    font-weight: 600;
+    background: var(--surface-alt);
+  }
+
+  td.positive { color: var(--positive); }
+  td.negative { color: var(--negative); }
+  td.neutral   { color: var(--neutral); }
+  td.na        { color: var(--text-muted); }
+
+  tr:last-child td { border-bottom: none; }
+
+  tr[data-level="0"] td { font-weight: 700; background: var(--surface-alt); }
+  tr[data-level="1"] td { font-weight: 600; }
+  tr[data-level="2"] td { font-weight: 600; }
+
+  tr:hover td {
+    background: var(--toggle-bg) !important;
+  }
+
+  .industry-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .toggle-btn {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: none;
+    background: var(--toggle-bg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: var(--accent);
+    transition: background 0.12s, transform 0.15s;
+    line-height: 1;
+  }
+
+  .toggle-btn:hover { background: var(--toggle-hover); }
+  .toggle-btn.open { transform: rotate(90deg); }
+  .toggle-btn.leaf { visibility: hidden; cursor: default; }
+
+  .industry-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  tr.hidden { display: none; }
+
+  .footnote {
+    max-width: 1000px;
+    margin: 12px auto 0;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+</style>
+
+<header>
+  <div class="header-left">
+    <h1>Employees on Nonfarm Payrolls</h1>
+    <p>Seasonally adjusted, thousands &nbsp;·&nbsp; Bureau of Labor Statistics &nbsp;·&nbsp; (p) = preliminary</p>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()">Toggle theme</button>
+</header>
+
+<div class="table-wrap">
+  <table id="bls-table">
+    <thead>
+      <tr>
+        <th class="col-industry" style="min-width:240px">
+          <div class="th-inner"><span>Industry</span></div>
+        </th>
+        <th class="col-naics">
+          <div class="th-inner"><span class="th-group">Code</span><span>NAICS</span></div>
+        </th>
+        <th>
+          <div class="th-inner"><span class="th-group">2025</span><span>May</span></div>
+        </th>
+        <th>
+          <div class="th-inner"><span class="th-group">2026</span><span>Jan.</span></div>
+        </th>
+        <th>
+          <div class="th-inner"><span class="th-group">2026</span><span>Feb.</span></div>
+        </th>
+        <th>
+          <div class="th-inner"><span class="th-group">2026</span><span>Mar.</span></div>
+        </th>
+        <th>
+          <div class="th-inner"><span class="th-group">2026</span><span>Apr.(p)</span></div>
+        </th>
+        <th>
+          <div class="th-inner"><span class="th-group">2026</span><span>May(p)</span></div>
+        </th>
+        <th class="col-change">
+          <div class="th-inner"><span class="th-group">Change</span><span>Apr.→May</span></div>
+        </th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<div class="footnote">(1) Data not available at this detail level for the most recent period &nbsp;·&nbsp; Click any row with children to expand or collapse</div>
+
+<script>
+const rows = [
+  { id:"r0",  parent:null, level:0, label:"Total nonfarm",              naics:"",          vals:["158,498","158,592","158,436","158,650","158,829","159,001"], change:"+172" },
+  { id:"r1",  parent:"r0", level:1, label:"Total private",              naics:"",          vals:["134,937","135,263","135,115","135,317","135,494","135,614"], change:"+120" },
+  { id:"r2",  parent:"r1", level:2, label:"Goods-producing",            naics:"",          vals:["21,538","21,501","21,480","21,513","21,527","21,555"],        change:"+28"  },
+  { id:"r3",  parent:"r2", level:3, label:"Mining and logging",         naics:"",          vals:["618","602","601","604","609","613"],                          change:"+4"   },
+  { id:"r4",  parent:"r3", level:4, label:"Logging",                    naics:"1133",      vals:["41.4","37.1","36.7","37.8","39.2","38.7"],                   change:"−0.5" },
+  { id:"r5",  parent:"r3", level:4, label:"Mining, quarrying, and oil and gas extraction", naics:"21", vals:["576.9","565.0","564.7","566.1","569.9","574.7"], change:"+4.8" },
+  { id:"r6",  parent:"r5", level:5, label:"Oil and gas extraction",     naics:"211",       vals:["118.6","115.5","116.2","115.9","115.5","115.6"],              change:"+0.1" },
+  { id:"r7",  parent:"r5", level:5, label:"Mining (except oil and gas)",naics:"212",       vals:["189.3","187.3","187.5","187.3","188.8","190.4"],              change:"+1.6" },
+  { id:"r8",  parent:"r7", level:6, label:"Coal mining",                naics:"2121",      vals:["40.0","39.1","38.9","38.4","38.7","38.7"],                   change:"0.0"  },
+  { id:"r9",  parent:"r8", level:7, label:"Surface coal mining (1)",    naics:"212114",    vals:["17.8","17.9","17.8","17.3","17.6","—"],                       change:"—"   },
+  { id:"r10", parent:"r8", level:7, label:"Underground coal mining (1)",naics:"212115",    vals:["22.3","21.1","21.1","21.1","21.0","—"],                       change:"—"   },
+  { id:"r11", parent:"r7", level:6, label:"Metal ore mining",           naics:"2122",      vals:["44.9","45.6","45.7","45.7","46.2","46.2"],                   change:"0.0"  },
+  { id:"r12", parent:"r11",level:7, label:"Gold ore and silver ore mining (1)", naics:"21222", vals:["15.7","15.7","15.7","15.8","15.9","—"],                  change:"—"   },
+  { id:"r13", parent:"r11",level:7, label:"Iron ore, copper, nickel, lead, zinc, and other metal ore mining (1)", naics:"21221,3,9", vals:["29.2","29.9","29.9","30.0","30.3","—"], change:"—" },
+];
+
+const hasChildren = new Set(rows.filter(r => r.parent).map(r => r.parent));
+const expanded = new Set(rows.map(r => r.id)); // all open by default
+
+function changeClass(v) {
+  if (v === "—") return "na";
+  if (v === "0.0") return "neutral";
+  return v.startsWith("+") ? "positive" : "negative";
+}
+
+function indentPx(level) {
+  return level * 16;
+}
+
+function render() {
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+
+  rows.forEach(row => {
+    const isParent = hasChildren.has(row.id);
+    const isOpen = expanded.has(row.id);
+
+    // determine visibility: hidden if any ancestor is collapsed
+    let hidden = false;
+    let pid = row.parent;
+    while (pid) {
+      if (!expanded.has(pid)) { hidden = true; break; }
+      pid = rows.find(r => r.id === pid)?.parent ?? null;
+    }
+
+    const tr = document.createElement("tr");
+    tr.dataset.id = row.id;
+    tr.dataset.level = row.level;
+    if (hidden) tr.classList.add("hidden");
+
+    // Industry cell
+    const tdInd = document.createElement("td");
+    tdInd.className = "col-industry";
+    tdInd.innerHTML = `
+      <div class="industry-cell" style="padding-left:${indentPx(row.level)}px">
+        <button class="toggle-btn ${isParent ? (isOpen ? "open" : "") : "leaf"}"
+                data-id="${row.id}" aria-label="${isOpen ? "Collapse" : "Expand"} ${row.label}">
+          ▶
+        </button>
+        <span class="industry-label">${row.label}</span>
+      </div>`;
+    tr.appendChild(tdInd);
+
+    // NAICS
+    const tdN = document.createElement("td");
+    tdN.className = "col-naics";
+    tdN.textContent = row.naics || "";
+    tr.appendChild(tdN);
+
+    // Value columns
+    row.vals.forEach(v => {
+      const td = document.createElement("td");
+      td.textContent = v;
+      if (v === "—") td.className = "na";
+      tr.appendChild(td);
+    });
+
+    // Change column
+    const tdC = document.createElement("td");
+    tdC.className = `col-change ${changeClass(row.change)}`;
+    tdC.textContent = row.change;
+    tr.appendChild(tdC);
+
+    tbody.appendChild(tr);
+  });
+
+  // Attach toggle listeners
+  tbody.querySelectorAll(".toggle-btn:not(.leaf)").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      if (expanded.has(id)) expanded.delete(id);
+      else expanded.add(id);
+      render();
+    });
+  });
+}
+
+function toggleTheme() {
+  const root = document.documentElement;
+  const cur = root.getAttribute("data-theme");
+  const isDark = cur === "dark" || (!cur && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  root.setAttribute("data-theme", isDark ? "light" : "dark");
+}
+
+render();
+</script>
