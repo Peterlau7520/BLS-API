@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Payrolls Since 1939</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --surface-page:   #f9f9f7;
+    --surface-card:   #fcfcfb;
+    --surface-sunken: #f2f1ed;
+    --ink-primary:    #0b0b0b;
+    --ink-secondary:  #52514e;
+    --ink-muted:      #898781;
+    --gridline:       #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --accent:         #2a78d6;
+    --accent-wash:    rgba(42,120,214,0.10);
+    --accent-ink:     #ffffff;
+    --series-1: #2a78d6; --series-2: #eb6834; --series-3: #1baf7a; --series-4: #eda100;
+    --series-5: #e87ba4; --series-6: #008300; --series-7: #4a3aa7; --series-8: #e34948;
+    --font-display: "Big Shoulders Display", system-ui, sans-serif;
+    --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface-page:   #0d0d0d;
+      --surface-card:   #1a1a19;
+      --surface-sunken: #141413;
+      --ink-primary:    #ffffff;
+      --ink-secondary:  #c3c2b7;
+      --ink-muted:      #898781;
+      --gridline:       #2c2c2a;
+      --baseline:       #383835;
+      --border:         rgba(255,255,255,0.10);
+      --accent:         #3987e5;
+      --accent-wash:    rgba(57,135,229,0.16);
+      --accent-ink:     #ffffff;
+      --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70; --series-4: #c98500;
+      --series-5: #d55181; --series-6: #008300; --series-7: #9085e9; --series-8: #e66767;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-page:   #0d0d0d;
+    --surface-card:   #1a1a19;
+    --surface-sunken: #141413;
+    --ink-primary:    #ffffff;
+    --ink-secondary:  #c3c2b7;
+    --ink-muted:      #898781;
+    --gridline:       #2c2c2a;
+    --baseline:       #383835;
+    --border:         rgba(255,255,255,0.10);
+    --accent:         #3987e5;
+    --accent-wash:    rgba(57,135,229,0.16);
+    --accent-ink:     #ffffff;
+    --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70; --series-4: #c98500;
+    --series-5: #d55181; --series-6: #008300; --series-7: #9085e9; --series-8: #e66767;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    margin: 0;
+    background: var(--surface-page);
+    color: var(--ink-primary);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font: inherit; color: inherit; }
+  ::selection { background: var(--accent-wash); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  .app { display: flex; flex-direction: column; height: 100vh; }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-card);
+    flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+  .brand-mark {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.06em;
+    color: var(--accent-ink);
+    background: var(--accent);
+    padding: 3px 8px 2px;
+    border-radius: 3px;
+    flex: none;
+  }
+  .brand h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(20px, 2.6vw, 28px);
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+    margin: 0;
+    line-height: 1.05;
+  }
+  .brand .sub {
+    display: block;
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    letter-spacing: 0.01em;
+    margin-top: 2px;
+  }
+  .topbar-controls { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+  .toggle-group {
+    display: inline-flex;
+    background: var(--surface-sunken);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 2px;
+    gap: 2px;
+  }
+  .toggle-group button {
+    border: none;
+    background: transparent;
+    color: var(--ink-secondary);
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .toggle-group button[aria-pressed="true"] {
+    background: var(--surface-card);
+    color: var(--ink-primary);
+    box-shadow: 0 1px 2px var(--border);
+  }
+  .toggle-group button:hover:not([aria-pressed="true"]) { color: var(--ink-primary); }
+
+  .slot-meter {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+  .slot-meter strong { color: var(--ink-primary); font-weight: 500; }
+
+  /* ---------- Layout ---------- */
+  .layout { display: flex; flex: 1; min-height: 0; }
+
+  .rail {
+    width: 320px;
+    flex: none;
+    border-right: 1px solid var(--border);
+    background: var(--surface-card);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .rail-head { padding: 14px 14px 10px; border-bottom: 1px solid var(--border); }
+  .search-wrap { position: relative; }
+  .search {
+    width: 100%;
+    padding: 8px 10px 8px 30px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface-sunken);
+    color: var(--ink-primary);
+    font-size: 13px;
+  }
+  .search::placeholder { color: var(--ink-muted); }
+  .search-icon {
+    position: absolute; left: 9px; top: 50%; transform: translateY(-50%);
+    width: 13px; height: 13px; color: var(--ink-muted); pointer-events: none;
+  }
+  .rail-hint { margin: 8px 2px 0; font-size: 11.5px; color: var(--ink-muted); }
+  .rail-hint kbd {
+    font-family: var(--font-mono); background: var(--surface-sunken);
+    border: 1px solid var(--border); border-radius: 3px; padding: 0 4px;
+  }
+
+  .tree { overflow-y: auto; padding: 6px 8px 24px; flex: 1; }
+  .tree ul { list-style: none; margin: 0; padding-left: 16px; }
+  .tree > ul { padding-left: 0; }
+  .node { display: flex; align-items: center; gap: 6px; min-height: 28px; }
+  .tree li.hidden-by-search { display: none; }
+  .tree li > ul { display: none; }
+  .tree li.open > ul { display: block; }
+  .disclose {
+    flex: none; width: 16px; height: 16px; border: none; background: none;
+    cursor: pointer; color: var(--ink-muted); display: flex; align-items: center; justify-content: center;
+    padding: 0; border-radius: 3px;
+  }
+  .disclose svg { width: 9px; height: 9px; transition: transform 0.12s ease; }
+  li.open > .node .disclose svg { transform: rotate(90deg); }
+  .disclose-spacer { width: 16px; flex: none; }
+  .disclose:hover { background: var(--surface-sunken); }
+
+  .swatch {
+    flex: none; width: 24px; height: 24px; border-radius: 50%;
+    border: none; background: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .swatch::before {
+    content: ""; width: 11px; height: 11px; border-radius: 50%;
+    border: 1.5px solid var(--ink-muted); background: transparent;
+  }
+  .swatch.on::before { border-color: var(--dot); background: var(--dot); }
+  .swatch:hover::before { border-color: var(--dot, var(--accent)); }
+  .swatch:disabled { cursor: not-allowed; opacity: 0.35; }
+  .swatch-spacer { width: 24px; flex: none; }
+
+  .label-btn {
+    border: none; background: none; text-align: left; cursor: pointer;
+    padding: 4px 4px; font-size: 13px; color: var(--ink-primary);
+    border-radius: 4px; flex: 1; min-width: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .label-btn:hover { background: var(--surface-sunken); }
+  .node.category > .label-btn { color: var(--ink-secondary); cursor: default; }
+  .node.category > .label-btn:hover { background: none; }
+  .node.selected > .label-btn { color: var(--ink-primary); font-weight: 500; }
+  mark { background: var(--accent-wash); color: inherit; border-radius: 2px; }
+
+  .toast {
+    position: absolute; left: 14px; right: 14px; bottom: 12px;
+    background: var(--ink-primary); color: var(--surface-card);
+    font-size: 12.5px; padding: 8px 12px; border-radius: 6px;
+    opacity: 0; transform: translateY(4px); pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+  .toast.show { opacity: 0.96; transform: translateY(0); }
+
+  /* ---------- Stage ---------- */
+  .stage {
+    flex: 1;
+    min-width: 0;
+    padding: 20px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+  }
+
+  .card {
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .chart-card { padding: 16px 18px 10px; }
+  .chart-head {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+    margin-bottom: 6px; min-height: 30px; flex-wrap: wrap;
+  }
+  .chart-title { font-size: 15px; font-weight: 600; margin: 0; }
+  .chart-title .muted { color: var(--ink-muted); font-weight: 400; }
+  .axis-title { font-size: 11.5px; color: var(--ink-muted); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+  .legend-item {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--ink-secondary);
+    background: none; border: none; cursor: pointer; padding: 2px 0;
+  }
+  .legend-key { width: 14px; height: 2px; border-radius: 1px; flex: none; }
+  .legend-item .lv { font-family: var(--font-mono); color: var(--ink-primary); }
+  .legend-item .x { color: var(--ink-muted); margin-left: 2px; }
+  .legend-item:hover .x { color: var(--ink-primary); }
+
+  .chart-wrap { position: relative; width: 100%; }
+  svg#chart { display: block; width: 100%; height: 360px; touch-action: none; }
+  .brush-row { display: flex; align-items: center; gap: 10px; margin-top: 2px; }
+  svg#brush { display: block; flex: 1; height: 46px; touch-action: none; min-width: 0; }
+  .reset-zoom {
+    flex: none; border: 1px solid var(--border); background: var(--surface-sunken);
+    color: var(--ink-secondary); font-size: 11.5px; padding: 5px 10px; border-radius: 6px; cursor: pointer;
+  }
+  .reset-zoom:hover { color: var(--ink-primary); border-color: var(--accent); }
+
+  .empty-state {
+    display: flex; align-items: center; justify-content: center;
+    height: 360px; color: var(--ink-muted); font-size: 13.5px; text-align: center;
+  }
+
+  .tooltip {
+    position: absolute; pointer-events: none;
+    background: var(--surface-card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    font-size: 12.5px; min-width: 140px; z-index: 5;
+  }
+  .tooltip .t-date { font-weight: 600; margin-bottom: 5px; font-size: 12px; }
+  .tooltip .t-row { display: flex; align-items: center; gap: 6px; padding: 1.5px 0; white-space: nowrap; }
+  .tooltip .t-key { width: 10px; height: 2px; flex: none; border-radius: 1px; }
+  .tooltip .t-name { color: var(--ink-secondary); overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+  .tooltip .t-val { font-family: var(--font-mono); font-weight: 500; margin-left: auto; padding-left: 10px; }
+
+  .table-card { padding: 4px; }
+  .table-toggle {
+    width: 100%; text-align: left; border: none; background: none; cursor: pointer;
+    padding: 10px 14px; font-size: 13px; font-weight: 500; color: var(--ink-secondary);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .table-toggle:hover { color: var(--ink-primary); }
+  .table-toggle svg { width: 11px; height: 11px; transition: transform 0.12s ease; }
+  .table-toggle.open svg { transform: rotate(180deg); }
+  .table-wrap { max-height: 360px; overflow: auto; border-top: 1px solid var(--border); }
+  table#dataTable { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 12.5px; }
+  table#dataTable th, table#dataTable td {
+    padding: 6px 14px; text-align: right; white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  table#dataTable th:first-child, table#dataTable td:first-child { text-align: left; font-family: var(--font-body); }
+  table#dataTable thead th {
+    position: sticky; top: 0; background: var(--surface-card);
+    color: var(--ink-muted); font-weight: 500; font-size: 11.5px;
+    border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.03em;
+  }
+  table#dataTable tbody tr:nth-child(odd) { background: var(--surface-sunken); }
+  table#dataTable td { color: var(--ink-primary); }
+
+  footer.credit {
+    padding: 4px 4px 0; font-size: 11.5px; color: var(--ink-muted);
+  }
+  footer.credit a { color: inherit; }
+
+  @media (max-width: 860px) {
+    .layout { flex-direction: column; }
+    .rail { width: auto; border-right: none; border-bottom: 1px solid var(--border); max-height: 40vh; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">CE</span>
+      <div>
+        <h1>Payrolls since 1939</h1>
+        <span class="sub" id="subCaption">BLS Current Employment Statistics · All employees, seasonally adjusted</span>
+      </div>
+    </div>
+    <div class="topbar-controls">
+      <div class="toggle-group" id="modeToggle" role="tablist" aria-label="Value mode">
+        <button type="button" role="tab" data-mode="levels" aria-pressed="true">Levels</button>
+        <button type="button" role="tab" data-mode="indexed" aria-pressed="false">Indexed (=100)</button>
+      </div>
+      <div class="slot-meter"><strong id="slotCount">0</strong> / 8 selected</div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="rail">
+      <div class="rail-head">
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
+          <input class="search" id="search" type="text" placeholder="Search industries…" autocomplete="off">
+        </div>
+        <p class="rail-hint">Pick up to 8 industries to compare.</p>
+      </div>
+      <div class="tree" id="tree" role="tree"></div>
+      <div class="toast" id="toast"></div>
+    </aside>
+
+    <main class="stage">
+      <section class="card chart-card">
+        <div class="chart-head">
+          <div>
+            <p class="chart-title" id="chartTitle">Select an industry to begin</p>
+            <div class="legend" id="legend"></div>
+          </div>
+          <span class="axis-title" id="yAxisTitle">Employees, thousands</span>
+        </div>
+        <div class="chart-wrap">
+          <svg id="chart" preserveAspectRatio="none"></svg>
+          <div class="tooltip" id="tooltip" hidden></div>
+        </div>
+        <div class="brush-row">
+          <svg id="brush" preserveAspectRatio="none"></svg>
+          <button type="button" class="reset-zoom" id="resetZoom" hidden>Reset zoom</button>
+        </div>
+      </section>
+
+      <section class="card table-card">
+        <button class="table-toggle" id="toggleTable" aria-expanded="false">
+          <span>Data table</span>
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 4.5L6 8l3.5-3.5"/></svg>
+        </button>
+        <div class="table-wrap" id="tableWrap" hidden>
+          <table id="dataTable"></table>
+        </div>
+      </section>
+
+      <footer class="credit">Source: U.S. Bureau of Labor Statistics, Current Employment Statistics (CE), series ending <span id="dataAsOf"></span>. Values are seasonally adjusted, in thousands.</footer>
+    </main>
+  </div>
+</div>
+
+<script id="dashboard-data" type="application/json">__DASHBOARD_DATA__</script>
+<script>
+(function () {
+  "use strict";
+
+  var DATA = JSON.parse(document.getElementById("dashboard-data").textContent);
+  var MONTHS = DATA.months;          // ["1939M01", ...]
+  var SERIES = DATA.series;          // {id: {title, start, values}}
+  var TREE = DATA.tree;
+  var MAX_SERIES = 8;
+  var SLOT_VARS = ["--series-1","--series-2","--series-3","--series-4","--series-5","--series-6","--series-7","--series-8"];
+
+  function monthLabel(idx, opts) {
+    opts = opts || {};
+    var s = MONTHS[idx];
+    var y = s.slice(0, 4), m = parseInt(s.slice(5, 7), 10);
+    var names = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    return opts.yearOnly ? y : (names[m - 1] + " " + y);
+  }
+
+  // ---------- State ----------
+  var selection = [];          // array of series ids, in selection order
+  var slotOf = {};             // id -> slot index (0..7), stable while selected
+  var freeSlots = [0,1,2,3,4,5,6,7];
+  var mode = "levels";         // "levels" | "indexed"
+  var domain = [0, MONTHS.length - 1]; // visible month-index range
+  var tableOpen = false;
+
+  function colorVar(id) { return "var(" + SLOT_VARS[slotOf[id]] + ")"; }
+
+  function assignSlot(id) {
+    var slot = freeSlots.shift();
+    slotOf[id] = slot;
+  }
+  function releaseSlot(id) {
+    freeSlots.push(slotOf[id]);
+    freeSlots.sort(function (a, b) { return a - b; });
+    delete slotOf[id];
+  }
+
+  // ---------- Toast ----------
+  var toastEl = document.getElementById("toast");
+  var toastTimer = null;
+  function showToast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, 2200);
+  }
+
+  // ---------- Tree ----------
+  var treeEl = document.getElementById("tree");
+
+  function buildTree(nodes, container, depth) {
+    var ul = document.createElement("ul");
+    nodes.forEach(function (node) {
+      var li = document.createElement("li");
+      li.className = "tree-li";
+      var hasChildren = !!(node.children && node.children.length);
+      var hasId = !!node.id;
+
+      var row = document.createElement("div");
+      row.className = "node" + (hasId ? "" : " category");
+      row.dataset.name = node.name.toLowerCase();
+
+      if (hasChildren) {
+        var disc = document.createElement("button");
+        disc.type = "button";
+        disc.className = "disclose";
+        disc.setAttribute("aria-label", "Toggle " + node.name);
+        disc.innerHTML = '<svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 1l4 3-4 3"/></svg>';
+        disc.addEventListener("click", function () {
+          li.classList.toggle("open");
+        });
+        row.appendChild(disc);
+      } else {
+        var sp = document.createElement("span");
+        sp.className = "disclose-spacer";
+        row.appendChild(sp);
+      }
+
+      if (hasId) {
+        var sw = document.createElement("button");
+        sw.type = "button";
+        sw.className = "swatch";
+        sw.setAttribute("aria-label", "Toggle " + node.name + " in chart");
+        sw.dataset.id = node.id;
+        row.appendChild(sw);
+      } else {
+        var sp2 = document.createElement("span");
+        sp2.className = "swatch-spacer";
+        row.appendChild(sp2);
+      }
+
+      var label = document.createElement(hasId ? "button" : "span");
+      label.className = "label-btn";
+      label.type = hasId ? "button" : undefined;
+      label.textContent = node.name;
+      label.title = node.name;
+      if (hasId) {
+        label.dataset.id = node.id;
+        label.addEventListener("click", function () { toggleSeries(node.id); });
+      }
+      row.appendChild(label);
+
+      if (hasId) {
+        row.querySelector(".swatch").addEventListener("click", function () { toggleSeries(node.id); });
+      }
+
+      li.appendChild(row);
+
+      if (hasChildren) {
+        buildTree(node.children, li, depth + 1);
+        if (depth < 1) li.classList.add("open");
+      }
+      ul.appendChild(li);
+    });
+    container.appendChild(ul);
+  }
+
+  buildTree(TREE, treeEl, 0);
+
+  function refreshTreeUI() {
+    var swatches = treeEl.querySelectorAll(".swatch");
+    for (var i = 0; i < swatches.length; i++) {
+      var sw = swatches[i];
+      var id = sw.dataset.id;
+      var on = selection.indexOf(id) !== -1;
+      sw.classList.toggle("on", on);
+      sw.style.setProperty("--dot", on ? colorVar(id) : "");
+      sw.disabled = !on && selection.length >= MAX_SERIES;
+      sw.closest(".node").classList.toggle("selected", on);
+    }
+  }
+
+  // ---------- Search ----------
+  var searchEl = document.getElementById("search");
+  searchEl.addEventListener("input", function () {
+    var q = searchEl.value.trim().toLowerCase();
+    var lis = treeEl.querySelectorAll("li.tree-li");
+    if (!q) {
+      lis.forEach(function (li) {
+        li.classList.remove("hidden-by-search");
+        var label = li.querySelector(":scope > .node > .label-btn");
+        if (label) label.textContent = label.title;
+      });
+      return;
+    }
+    lis.forEach(function (li) {
+      var row = li.querySelector(":scope > .node");
+      var name = row.dataset.name;
+      var match = name.indexOf(q) !== -1;
+      var label = row.querySelector(".label-btn");
+      if (match) {
+        var idx = name.indexOf(q);
+        var raw = label.title;
+        label.innerHTML = raw.slice(0, idx) + "<mark>" + raw.slice(idx, idx + q.length) + "</mark>" + raw.slice(idx + q.length);
+      }
+      li.dataset.selfMatch = match ? "1" : "0";
+    });
+    // visibility: a node is visible if itself matches or has a visible/matching descendant
+    function computeVisible(ul) {
+      var anyVisible = false;
+      Array.prototype.forEach.call(ul.children, function (li) {
+        var childUl = li.querySelector(":scope > ul");
+        var childVisible = childUl ? computeVisible(childUl) : false;
+        var self = li.dataset.selfMatch === "1";
+        var visible = self || childVisible;
+        li.classList.toggle("hidden-by-search", !visible);
+        if (visible && childUl && childVisible) li.classList.add("open");
+        if (visible) anyVisible = true;
+      });
+      return anyVisible;
+    }
+    computeVisible(treeEl.firstChild);
+  });
+
+  // ---------- Selection ----------
+  function toggleSeries(id) {
+    var i = selection.indexOf(id);
+    if (i !== -1) {
+      selection.splice(i, 1);
+      releaseSlot(id);
+    } else {
+      if (selection.length >= MAX_SERIES) {
+        showToast("Up to 8 industries at once — remove one to add another.");
+        return;
+      }
+      selection.push(id);
+      assignSlot(id);
+    }
+    refreshTreeUI();
+    renderAll();
+  }
+
+  // ---------- Mode toggle ----------
+  var modeToggle = document.getElementById("modeToggle");
+  modeToggle.addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-mode]");
+    if (!btn) return;
+    mode = btn.dataset.mode;
+    Array.prototype.forEach.call(modeToggle.querySelectorAll("button"), function (b) {
+      b.setAttribute("aria-pressed", String(b === btn));
+    });
+    document.getElementById("yAxisTitle").textContent = mode === "levels" ? "Employees, thousands" : "Index (range start = 100)";
+    renderChart();
+    renderTable();
+  });
+
+  // ---------- Number formatting ----------
+  var fmtLevel = new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 });
+  var fmtIndex = new Intl.NumberFormat("en-US", { maximumFractionDigits: 1, minimumFractionDigits: 1 });
+  function fmtValue(v) { return mode === "levels" ? fmtLevel.format(v) : fmtIndex.format(v); }
+
+  // ---------- Series math ----------
+  function seriesPointsInDomain(id, dom) {
+    var s = SERIES[id];
+    var lo = Math.max(dom[0], s.start);
+    var hi = Math.min(dom[1], s.start + s.values.length - 1);
+    var pts = [];
+    for (var i = lo; i <= hi; i++) pts.push([i, s.values[i - s.start]]);
+    return pts;
+  }
+
+  function indexedPoints(pts) {
+    if (!pts.length) return pts;
+    var base = null;
+    for (var i = 0; i < pts.length; i++) { if (pts[i][1] != null) { base = pts[i][1]; break; } }
+    if (!base) return pts.map(function (p) { return [p[0], null]; });
+    return pts.map(function (p) { return [p[0], p[1] == null ? null : (p[1] / base) * 100]; });
+  }
+
+  function displayPoints(id, dom) {
+    var pts = seriesPointsInDomain(id, dom);
+    return mode === "indexed" ? indexedPoints(pts) : pts;
+  }
+
+  // ---------- Chart rendering (hand-rolled SVG) ----------
+  var svg = document.getElementById("chart");
+  var tooltip = document.getElementById("tooltip");
+  var chartWrap = document.querySelector(".chart-wrap");
+  var NS = "http://www.w3.org/2000/svg";
+  var PAD = { top: 10, right: 14, bottom: 24, left: 56 };
+
+  function el(tag, attrs) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  function niceStep(rough) {
+    var pow = Math.pow(10, Math.floor(Math.log10(rough)));
+    var f = rough / pow;
+    var nf = f >= 5 ? 10 : f >= 2 ? 5 : f >= 1 ? 2 : 1;
+    return nf * pow;
+  }
+
+  function pickYearStep(spanMonths) {
+    var years = spanMonths / 12;
+    if (years > 70) return 20;
+    if (years > 35) return 10;
+    if (years > 15) return 5;
+    if (years > 6) return 2;
+    return 1;
+  }
+
+  function renderChart() {
+    svg.innerHTML = "";
+    var box = svg.getBoundingClientRect();
+    var W = Math.max(box.width, 200), H = box.height || 360;
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+
+    var titleEl = document.getElementById("chartTitle");
+    var legendEl = document.getElementById("legend");
+    legendEl.innerHTML = "";
+
+    if (!selection.length) {
+      titleEl.textContent = "Select an industry to begin";
+      var empty = document.createElementNS(NS, "text");
+      svg.appendChild(el("rect", { x:0, y:0, width:W, height:H, fill:"none" }));
+      var msg = el("text", { x: W/2, y: H/2, "text-anchor":"middle", fill:"var(--ink-muted)", "font-size":13.5 });
+      msg.textContent = "Pick industries from the tree on the left";
+      svg.appendChild(msg);
+      renderBrush();
+      return;
+    }
+
+    if (selection.length === 1) {
+      titleEl.textContent = SERIES[selection[0]].title.replace(/, seasonally adjusted$/i, "");
+    } else {
+      titleEl.textContent = "Comparing " + selection.length + " industries";
+      selection.forEach(function (id) {
+        var item = document.createElement("button");
+        item.type = "button";
+        item.className = "legend-item";
+        var key = document.createElement("span");
+        key.className = "legend-key";
+        key.style.background = colorVar(id);
+        var name = document.createElement("span");
+        name.textContent = shortName(id);
+        var x = document.createElement("span");
+        x.className = "x";
+        x.textContent = "✕";
+        item.appendChild(key); item.appendChild(name); item.appendChild(x);
+        item.addEventListener("click", function () { toggleSeries(id); });
+        legendEl.appendChild(item);
+      });
+    }
+
+    var plotW = W - PAD.left - PAD.right;
+    var plotH = H - PAD.top - PAD.bottom;
+
+    var series = selection.map(function (id) { return { id: id, pts: displayPoints(id, domain) }; });
+
+    var allVals = [];
+    series.forEach(function (s) { s.pts.forEach(function (p) { if (p[1] != null) allVals.push(p[1]); }); });
+    if (!allVals.length) allVals = [0, 1];
+
+    var yMin, yMax;
+    if (mode === "levels") {
+      yMin = 0;
+      yMax = Math.max.apply(null, allVals);
+    } else {
+      yMin = Math.min.apply(null, allVals.concat([100]));
+      yMax = Math.max.apply(null, allVals.concat([100]));
+      var pad = (yMax - yMin) * 0.08 || 5;
+      yMin -= pad; yMax += pad;
+    }
+    if (yMax === yMin) yMax = yMin + 1;
+
+    var step = niceStep((yMax - yMin) / 4.5);
+    var niceMin = mode === "levels" ? 0 : Math.floor(yMin / step) * step;
+    var niceMax = Math.ceil(yMax / step) * step;
+
+    function xScale(i) { return PAD.left + ((i - domain[0]) / (domain[1] - domain[0] || 1)) * plotW; }
+    function yScale(v) { return PAD.top + (1 - (v - niceMin) / (niceMax - niceMin || 1)) * plotH; }
+
+    // gridlines + y ticks
+    var yTicks = [];
+    for (var v = niceMin; v <= niceMax + 1e-9; v += step) yTicks.push(Math.round(v * 100) / 100);
+    yTicks.forEach(function (t) {
+      var y = yScale(t);
+      svg.appendChild(el("line", { x1: PAD.left, x2: W - PAD.right, y1: y, y2: y, stroke: "var(--gridline)", "stroke-width": 1 }));
+      var lbl = el("text", { x: PAD.left - 8, y: y + 4, "text-anchor": "end", "font-size": 11, fill: "var(--ink-muted)", "font-family": "var(--font-mono)" });
+      lbl.textContent = mode === "levels" ? fmtLevel.format(t) : fmtIndex.format(t);
+      svg.appendChild(lbl);
+    });
+
+    // x ticks (decades / adaptive)
+    var yStep = pickYearStep(domain[1] - domain[0]);
+    for (var idx = domain[0]; idx <= domain[1]; idx++) {
+      var yy = parseInt(MONTHS[idx].slice(0, 4), 10);
+      var mm = parseInt(MONTHS[idx].slice(5, 7), 10);
+      if (mm === 1 && yy % yStep === 0) {
+        var x = xScale(idx);
+        svg.appendChild(el("line", { x1: x, x2: x, y1: PAD.top, y2: H - PAD.bottom, stroke: "var(--gridline)", "stroke-width": 1 }));
+        var xl = el("text", { x: x, y: H - PAD.bottom + 16, "text-anchor": "middle", "font-size": 11, fill: "var(--ink-muted)", "font-family": "var(--font-mono)" });
+        xl.textContent = String(yy);
+        svg.appendChild(xl);
+      }
+    }
+    svg.appendChild(el("line", { x1: PAD.left, x2: W - PAD.right, y1: H - PAD.bottom, y2: H - PAD.bottom, stroke: "var(--baseline)", "stroke-width": 1 }));
+
+    // lines
+    series.forEach(function (s) {
+      var d = "";
+      var open = false;
+      s.pts.forEach(function (p) {
+        if (p[1] == null) { open = false; return; }
+        var x = xScale(p[0]), y = yScale(p[1]);
+        d += (open ? "L" : "M") + x.toFixed(2) + "," + y.toFixed(2) + " ";
+        open = true;
+      });
+      if (d) {
+        svg.appendChild(el("path", { d: d, fill: "none", stroke: colorVar(s.id), "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+      }
+      // end marker + direct label (only when few series)
+      var last = null;
+      for (var k = s.pts.length - 1; k >= 0; k--) { if (s.pts[k][1] != null) { last = s.pts[k]; break; } }
+      if (last) {
+        var lx = xScale(last[0]), ly = yScale(last[1]);
+        svg.appendChild(el("circle", { cx: lx, cy: ly, r: 4, fill: colorVar(s.id), stroke: "var(--surface-card)", "stroke-width": 2 }));
+        if (selection.length <= 4) {
+          var roomRight = (W - PAD.right) - lx > 60;
+          var dl = el("text", {
+            x: roomRight ? lx + 8 : lx - 8, y: ly + 4,
+            "text-anchor": roomRight ? "start" : "end",
+            "font-size": 11.5, fill: "var(--ink-secondary)", "font-family": "var(--font-mono)"
+          });
+          dl.textContent = fmtValue(last[1]);
+          svg.appendChild(dl);
+        }
+      }
+    });
+
+    // hover layer -- hitRect must own every pointer event in the plot area, so it's
+    // pinned to pointer-events:all (fill:transparent alone isn't reliably hit-testable)
+    // and the crosshair drawn on top of it is explicitly excluded from hit-testing,
+    // otherwise the pointer landing exactly on that 1px line would steal the event.
+    var hitRect = el("rect", { x: PAD.left, y: PAD.top, width: plotW, height: plotH, fill: "transparent", "pointer-events": "all" });
+    svg.appendChild(hitRect);
+    var crosshair = el("line", { y1: PAD.top, y2: H - PAD.bottom, stroke: "var(--ink-muted)", "stroke-width": 1, opacity: 0, "pointer-events": "none" });
+    svg.appendChild(crosshair);
+
+    function onMove(clientX, clientY) {
+      var rect = svg.getBoundingClientRect();
+      var px = (clientX - rect.left) * (W / rect.width);
+      var py = (clientY - rect.top) * (H / rect.height);
+      if (px < PAD.left || px > W - PAD.right) { crosshair.setAttribute("opacity", 0); tooltip.hidden = true; return; }
+      var frac = (px - PAD.left) / plotW;
+      var idxAt = Math.round(domain[0] + frac * (domain[1] - domain[0]));
+      idxAt = Math.max(domain[0], Math.min(domain[1], idxAt));
+      var xAt = xScale(idxAt);
+      crosshair.setAttribute("x1", xAt); crosshair.setAttribute("x2", xAt); crosshair.setAttribute("opacity", 1);
+
+      var rows = series.map(function (s) {
+        var s2 = SERIES[s.id];
+        var raw = (idxAt >= s2.start && idxAt < s2.start + s2.values.length) ? s2.values[idxAt - s2.start] : null;
+        var disp = null;
+        for (var k = 0; k < s.pts.length; k++) { if (s.pts[k][0] === idxAt) { disp = s.pts[k][1]; break; } }
+        return { id: s.id, name: shortName(s.id), val: disp, raw: raw };
+      }).filter(function (r) { return r.val != null; });
+
+      if (!rows.length) { tooltip.hidden = true; return; }
+
+      var html = '<div class="t-date">' + monthLabel(idxAt) + "</div>";
+      rows.forEach(function (r) {
+        html += '<div class="t-row"><span class="t-key" style="background:' + colorVar(r.id) + '"></span>' +
+          '<span class="t-name"></span><span class="t-val">' + fmtValue(r.val) + "</span></div>";
+      });
+      tooltip.innerHTML = html;
+      var nameEls = tooltip.querySelectorAll(".t-name");
+      rows.forEach(function (r, i) { nameEls[i].textContent = r.name; });
+      tooltip.hidden = false;
+
+      var wrapRect = chartWrap.getBoundingClientRect();
+      var left = (clientX - wrapRect.left) + 14;
+      var top = (clientY - wrapRect.top) - 10;
+      var tw = tooltip.offsetWidth;
+      if (left + tw > wrapRect.width - 4) left = (clientX - wrapRect.left) - tw - 14;
+      tooltip.style.left = left + "px";
+      tooltip.style.top = Math.max(4, top) + "px";
+    }
+
+    hitRect.addEventListener("pointermove", function (e) { onMove(e.clientX, e.clientY); });
+    hitRect.addEventListener("pointerleave", function () { crosshair.setAttribute("opacity", 0); tooltip.hidden = true; });
+
+    renderBrush();
+  }
+
+  function shortName(id) {
+    var t = SERIES[id].title;
+    var m = t.match(/^All employees, thousands, (.+?), seasonally adjusted$/i);
+    var name = m ? m[1] : t;
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  }
+
+  // ---------- Brush (zoom strip) ----------
+  var brushSvg = document.getElementById("brush");
+  var FULL_DOMAIN = [0, MONTHS.length - 1];
+
+  function renderBrush() {
+    brushSvg.innerHTML = "";
+    var box = brushSvg.getBoundingClientRect();
+    var W = Math.max(box.width, 200), H = box.height || 46;
+    brushSvg.setAttribute("viewBox", "0 0 " + W + " " + H);
+
+    var refId = selection[0];
+    if (refId) {
+      var s = SERIES[refId];
+      var vals = s.values.filter(function (v) { return v != null; });
+      var min = Math.min.apply(null, vals), max = Math.max.apply(null, vals);
+      var d = "";
+      for (var i = 0; i < s.values.length; i++) {
+        var globalIdx = s.start + i;
+        var x = PAD.left + (globalIdx / (MONTHS.length - 1)) * (W - PAD.left - PAD.right);
+        var y = 6 + (1 - (s.values[i] - min) / (max - min || 1)) * (H - 12);
+        d += (i === 0 ? "M" : "L") + x.toFixed(1) + "," + y.toFixed(1) + " ";
+      }
+      brushSvg.appendChild(el("path", { d: d, fill: "none", stroke: "var(--ink-muted)", "stroke-width": 1.2, opacity: 0.6 }));
+    }
+    brushSvg.appendChild(el("line", { x1: PAD.left, x2: W - PAD.right, y1: H - 2, y2: H - 2, stroke: "var(--baseline)", "stroke-width": 1 }));
+
+    function gx(i) { return PAD.left + (i / (MONTHS.length - 1)) * (W - PAD.left - PAD.right); }
+    function gi(x) {
+      var frac = (x - PAD.left) / (W - PAD.left - PAD.right);
+      return Math.round(frac * (MONTHS.length - 1));
+    }
+
+    var selRect = el("rect", {
+      x: gx(domain[0]), y: 2, width: Math.max(2, gx(domain[1]) - gx(domain[0])), height: H - 6,
+      fill: "var(--accent-wash)", stroke: "var(--accent)", "stroke-width": 1, rx: 3
+    });
+    brushSvg.appendChild(selRect);
+    var handleL = el("rect", { x: gx(domain[0]) - 3, y: 2, width: 6, height: H - 6, rx: 2, fill: "var(--accent)", cursor: "ew-resize" });
+    var handleR = el("rect", { x: gx(domain[1]) - 3, y: 2, width: 6, height: H - 6, rx: 2, fill: "var(--accent)", cursor: "ew-resize" });
+    brushSvg.appendChild(handleL);
+    brushSvg.appendChild(handleR);
+
+    function drag(mode, evt0) {
+      evt0.preventDefault();
+      var startX = evt0.clientX;
+      var startDomain = domain.slice();
+      var rect = brushSvg.getBoundingClientRect();
+      function toLocalX(clientX) { return (clientX - rect.left) * (W / rect.width); }
+
+      function onMove(e) {
+        var x = toLocalX(e.clientX);
+        var i = Math.max(0, Math.min(MONTHS.length - 1, gi(x)));
+        if (mode === "left") domain = [Math.min(i, domain[1] - 6), domain[1]];
+        else if (mode === "right") domain = [domain[0], Math.max(i, domain[0] + 6)];
+        else {
+          var dx = toLocalX(e.clientX) - toLocalX(startX);
+          var di = Math.round((dx / (W - PAD.left - PAD.right)) * (MONTHS.length - 1));
+          var span = startDomain[1] - startDomain[0];
+          var lo = Math.max(0, Math.min(MONTHS.length - 1 - span, startDomain[0] + di));
+          domain = [lo, lo + span];
+        }
+        renderChart();
+        renderTable();
+      }
+      function onUp() {
+        window.removeEventListener("pointermove", onMove);
+        window.removeEventListener("pointerup", onUp);
+      }
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp);
+    }
+
+    handleL.addEventListener("pointerdown", function (e) { drag("left", e); });
+    handleR.addEventListener("pointerdown", function (e) { drag("right", e); });
+    selRect.addEventListener("pointerdown", function (e) { drag("pan", e); });
+    brushSvg.addEventListener("dblclick", resetZoom);
+
+    resetZoomBtn.hidden = (domain[0] === FULL_DOMAIN[0] && domain[1] === FULL_DOMAIN[1]);
+  }
+
+  function resetZoom() { domain = FULL_DOMAIN.slice(); renderChart(); renderTable(); }
+  var resetZoomBtn = document.getElementById("resetZoom");
+  resetZoomBtn.addEventListener("click", resetZoom);
+
+  // ---------- Table ----------
+  var toggleTableBtn = document.getElementById("toggleTable");
+  var tableWrap = document.getElementById("tableWrap");
+  toggleTableBtn.addEventListener("click", function () {
+    tableOpen = !tableOpen;
+    tableWrap.hidden = !tableOpen;
+    toggleTableBtn.classList.toggle("open", tableOpen);
+    toggleTableBtn.setAttribute("aria-expanded", String(tableOpen));
+    if (tableOpen) renderTable();
+  });
+
+  function renderTable() {
+    if (!tableOpen) return;
+    var table = document.getElementById("dataTable");
+    table.innerHTML = "";
+    if (!selection.length) { table.innerHTML = "<tr><td style='padding:14px;color:var(--ink-muted)'>No industries selected.</td></tr>"; return; }
+
+    var thead = document.createElement("thead");
+    var htr = document.createElement("tr");
+    var hdate = document.createElement("th"); hdate.textContent = "Month"; htr.appendChild(hdate);
+    selection.forEach(function (id) {
+      var th = document.createElement("th");
+      th.textContent = shortName(id);
+      th.style.color = "var(--ink-primary)";
+      htr.appendChild(th);
+    });
+    thead.appendChild(htr);
+    table.appendChild(thead);
+
+    var tbody = document.createElement("tbody");
+    var seriesData = selection.map(function (id) { return { id: id, pts: displayPoints(id, domain) }; });
+    for (var i = domain[1]; i >= domain[0]; i--) {
+      var tr = document.createElement("tr");
+      var td0 = document.createElement("td"); td0.textContent = monthLabel(i); tr.appendChild(td0);
+      seriesData.forEach(function (s) {
+        var td = document.createElement("td");
+        var found = null;
+        for (var k = 0; k < s.pts.length; k++) { if (s.pts[k][0] === i) { found = s.pts[k][1]; break; } }
+        td.textContent = found == null ? "—" : fmtValue(found);
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+  }
+
+  // ---------- Wiring ----------
+  function renderAll() {
+    document.getElementById("slotCount").textContent = selection.length;
+    renderChart();
+    renderTable();
+  }
+
+  window.addEventListener("resize", function () { renderChart(); });
+
+  // Data-as-of caption
+  (function () {
+    var maxIdx = MONTHS.length - 1;
+    for (var id in SERIES) {
+      var s = SERIES[id];
+      maxIdx = Math.max(maxIdx, 0);
+    }
+    var lastPopulated = 0;
+    for (var id2 in SERIES) {
+      var s2 = SERIES[id2];
+      lastPopulated = Math.max(lastPopulated, s2.start + s2.values.length - 1);
+    }
+    document.getElementById("dataAsOf").textContent = monthLabel(lastPopulated);
+    var count = Object.keys(SERIES).length;
+    document.getElementById("subCaption").textContent =
+      "BLS Current Employment Statistics · " + count + " series · All employees, seasonally adjusted · 1939–" + MONTHS[lastPopulated].slice(0,4);
+  })();
+
+  // Default selection: Total nonfarm
+  var defaultId = (TREE[0] && TREE[0].id) ? TREE[0].id : null;
+  if (defaultId) toggleSeries(defaultId);
+  else renderAll();
+})();
+</script>
+</body>
+</html>
