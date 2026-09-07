@@ -4,6 +4,7 @@ import json
 import requests
 import pandas as pd
 
+import build_dashboard
 from metadata import build_metadata
 
 # ── Config ─────────────────────────────────────────────────────────────────────
@@ -100,3 +101,6 @@ ts_df.index.name = "series_id"
 output = meta.join(ts_df)
 output.to_excel("output.xlsx")
 print(f"\nDone — {len(output)} rows × {len(output.columns)} cols → output.xlsx")
+
+# ── Build the interactive dashboard from the file we just wrote ────────────────
+build_dashboard.main()

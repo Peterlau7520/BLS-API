@@ -44,7 +44,7 @@ input/ce.series.txt ────┴─> metadata.py   ──> one row per series
 
 - **`metadata.py`** — filters `ce.series.txt` down to the series we care about (`data_type_code == "01"`, `seasonal == "S"`) and merges in the `Level 0..N` columns from `hierarchy.py`. `build_metadata()` returns one row per `series_id` — this is the full list of series `api.py` fetches, plus the columns that go straight into the output sheet.
 
-- **`api.py`** — entry point. Loads `build_metadata()`, batches the series through the BLS `timeseries/data` API (`BATCH_SIZE` series x `YEAR_CHUNK` years per call, retrying failed calls up to `MAX_RETRIES` times), reindexes each series to a full `YYYYMMM` calendar, joins the monthly values onto the metadata, and writes `output.xlsx`.
+- **`api.py`** — entry point. Loads `build_metadata()`, batches the series through the BLS `timeseries/data` API (`BATCH_SIZE` series x `YEAR_CHUNK` years per call, retrying failed calls up to `MAX_RETRIES` times), reindexes each series to a full `YYYYMMM` calendar, joins the monthly values onto the metadata, and writes `output.xlsx` — then calls `build_dashboard.main()` directly, so `dashboard.html` is always regenerated from the `output.xlsx` that was just written.
   - Reads `BLS_API_KEY` from the environment (`.env`) — with a key you get the v2 endpoint (20-year chunks, higher daily limit); without one it falls back to v1 (10-year chunks, 25 calls/day).
 
 - **`output.xlsx`** — the pipeline's output: one row per series, `Level 0..N` industry columns followed by one column per month.
@@ -53,7 +53,7 @@ input/ce.series.txt ────┴─> metadata.py   ──> one row per series
   - clips each series to its own non-null date range and rounds to 1 decimal (BLS seasonally-adjusted "thousands" values aren't always whole numbers),
   - rebuilds the same industry tree as `hierarchy.py` (reusing its `NON_NESTING_ROLLUPS` exception) but keyed by `industry_code` so it can attach each node's `series_id` and prune the handful of industries with no seasonally-adjusted series of their own,
   - injects the result as JSON into `dashboard_template.html` (marker `__DASHBOARD_DATA__`) and writes `dashboard.html`.
-  - Run it after `api.py` (needs `output.xlsx` to already exist): `python build_dashboard.py`.
+  - `api.py` calls `build_dashboard.main()` automatically after writing `output.xlsx`. Run it standalone (e.g. to pick up a template/style edit without re-fetching from the API) with `python build_dashboard.py` — it only reads the `output.xlsx` already on disk.
 
 - **`dashboard_template.html`** — the dashboard's HTML/CSS/JS shell (hand-rolled SVG line chart, no external chart library). Left rail is a searchable tree over every industry node; clicking one plots its full monthly history. Supports comparing up to 8 series at once, a Levels/Indexed(=100) toggle (needed because "Total nonfarm" and a detailed leaf industry differ by orders of magnitude — see `dataviz` skill's dual-axis anti-pattern), a zoom/pan brush, hover tooltip, and a data-table twin of the chart.
 
@@ -72,9 +72,8 @@ input/ce.series.txt ────┴─> metadata.py   ──> one row per series
 ```
 bls\Scripts\activate
 python api.py
-python build_dashboard.py
 ```
 
 (PowerShell: `bls\Scripts\Activate.ps1`. Git Bash: `source bls/Scripts/activate`.)
 
-Set `BLS_API_KEY` (see `.env`) beforehand to use the faster v2 API path. Then open `dashboard.html` in a browser.
+Set `BLS_API_KEY` (see `.env`) beforehand to use the faster v2 API path. `api.py` writes both `output.xlsx` and `dashboard.html` in one run — open `dashboard.html` directly in a browser afterward.

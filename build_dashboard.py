@@ -110,16 +110,16 @@ def render_html(payload: dict) -> str:
     return template.replace("__DASHBOARD_DATA__", blob)
 
 
-if __name__ == "__main__":
+def count_nodes(nodes: list) -> int:
+    n = 0
+    for node in nodes:
+        n += 1
+        n += count_nodes(node.get("children", []))
+    return n
+
+
+def main() -> None:
     payload = build_payload()
-
-    def count_nodes(nodes):
-        n = 0
-        for node in nodes:
-            n += 1
-            n += count_nodes(node.get("children", []))
-        return n
-
     print(f"months: {len(payload['months'])}")
     print(f"series: {len(payload['series'])}")
     print(f"tree nodes: {count_nodes(payload['tree'])}")
@@ -128,3 +128,7 @@ if __name__ == "__main__":
     with open(DEST_HTML, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"wrote {DEST_HTML} ({len(html):,} bytes)")
+
+
+if __name__ == "__main__":
+    main()
